@@ -1,0 +1,11 @@
+(rule
+ (targets main.exe)
+ (deps main.c ../stb/stb_image.h ../stb/stb_image_write.h)
+ (action
+  (run gcc -O2 -o %{targets} main.c -lm)))
+
+(rule
+ (targets main_cuda.exe)
+ (deps main.cu ../stb/stb_image.h ../stb/stb_image_write.h)
+ (action
+  (run nvcc -O2 -o %{targets} main.cu)))

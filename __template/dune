@@ -1,0 +1,11 @@
+(rule
+ (targets main.exe)
+ (deps main.cu)
+ (action
+  (run nvcc %{deps} -o %{targets})))
+
+(rule
+ (alias run)
+ (deps main.exe)
+ (action
+  (run ./main.exe)))
