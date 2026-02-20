@@ -1,7 +1,7 @@
 
 static int __device__ blur_radius = 5;
 
-extern "C" __global__ void blur(const unsigned char* input, unsigned char* output, int width, int height) {
+extern "C" __global__ void kernel(const unsigned char* input, unsigned char* output, int width, int height) {
   int cx = blockDim.x * blockIdx.x + threadIdx.x;
   int cy = blockDim.y * blockIdx.y + threadIdx.y;
 

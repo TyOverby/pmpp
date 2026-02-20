@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
   free(source);
 
   CUfunction kernel;
-  exit_on_error(cuModuleGetFunction(&kernel, module, "blur"));
+  exit_on_error(cuModuleGetFunction(&kernel, module, "kernel"));
 
   // Load image
   int width, height, channels;
@@ -46,38 +46,38 @@ int main(int argc, char** argv) {
   int num_pixels = width * height;
 
   // Allocate device memory
-  CUdeviceptr d_rgb, d_blur;
-  exit_on_error(cuMemAlloc(&d_rgb, 3 * num_pixels));
-  exit_on_error(cuMemAlloc(&d_blur, 3 * num_pixels));
+  CUdeviceptr d_input, d_output;
+  exit_on_error(cuMemAlloc(&d_input, 3 * num_pixels));
+  exit_on_error(cuMemAlloc(&d_output, 3 * num_pixels));
 
   // Copy input to device
-  exit_on_error(cuMemcpyHtoD(d_rgb, img, 3 * num_pixels));
+  exit_on_error(cuMemcpyHtoD(d_input, img, 3 * num_pixels));
   stbi_image_free(img);
 
   // Launch kernel
   int threads_per_dimension = 32;
   int blocks_x = ceil((double)width / threads_per_dimension);
   int blocks_y = ceil((double)height / threads_per_dimension);
-  void* args[] = {&d_rgb, &d_blur, &width, &height};
+  void* args[] = {&d_input, &d_output, &width, &height};
   exit_on_error(cuLaunchKernel(kernel, blocks_x, blocks_y, 1, threads_per_dimension, threads_per_dimension, 1, 0, NULL,
                                args, NULL));
   exit_on_error(cuCtxSynchronize());
 
   // Copy result back to host
-  unsigned char* blur = malloc(3 * num_pixels);
-  exit_on_error(cuMemcpyDtoH(blur, d_blur, 3 * num_pixels));
+  unsigned char* output = malloc(3 * num_pixels);
+  exit_on_error(cuMemcpyDtoH(output, d_output, 3 * num_pixels));
 
-  exit_on_error(cuMemFree(d_rgb));
-  exit_on_error(cuMemFree(d_blur));
+  exit_on_error(cuMemFree(d_input));
+  exit_on_error(cuMemFree(d_output));
 
-  if (!stbi_write_png(output_path, width, height, 3, blur, width * 3)) {
+  if (!stbi_write_png(output_path, width, height, 3, output, width * 3)) {
     fprintf(stderr, "Failed to write image: %s\n", output_path);
-    free(blur);
+    free(output);
     return 1;
   }
 
-  printf("Wrote blurscale image to %s\n", output_path);
-  free(blur);
+  printf("Wrote outputscale image to %s\n", output_path);
+  free(output);
   cuda_cleanup(&s, module);
   return 0;
 }
