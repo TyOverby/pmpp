@@ -13,11 +13,10 @@ typedef struct {
   int minor;
 } cuda_state;
 
-char *read_file(const char *path);
+char* read_file(const char* path);
 cuda_state cuda_init(void);
-void cuda_print_device_info(const cuda_state *s);
-int cuda_compile_kernel(const cuda_state *s, const char *source,
-                        CUmodule *module);
-void cuda_cleanup(cuda_state *s, CUmodule module);
+void cuda_print_device_info(const cuda_state* s);
+int cuda_compile_kernel(const cuda_state* s, const char* source, CUmodule* module);
+void cuda_cleanup(cuda_state* s, CUmodule module);
 
 #endif
