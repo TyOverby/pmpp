@@ -1,9 +1,9 @@
 #define STB_IMAGE_IMPLEMENTATION
-#include "../stb/stb_image.h"
+#include "../../stb/stb_image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "../stb/stb_image_write.h"
+#include "../../stb/stb_image_write.h"
 
-#include "../shared/cuda_helpers.h"
+#include "../../shared/cuda_helpers.h"
 
 int main(int argc, char** argv) {
   if (argc != 4) {
