@@ -21,9 +21,9 @@ void exit_on_error(CUresult result) {
     cuGetErrorString(result, &str);
 
     if (str == NULL) {
-      fprintf(stderr, "error printing error code");
+      fprintf(stderr, "cuda error printing error code");
     } else {
-      fprintf(stderr, "error: %s", str);
+      fprintf(stderr, "cuda error: %s", str);
     }
 
     exit(1);
@@ -53,7 +53,7 @@ int cuda_compile_kernel(const cuda_state* s, const char* source, CUmodule* modul
 
   char arch_flag[32];
   snprintf(arch_flag, sizeof(arch_flag), "--gpu-architecture=sm_%d%d", s->major, s->minor);
-  const char* opts[] = {arch_flag};
+  const char* opts[] = {arch_flag, "-default-device"};
   nvrtcResult res = nvrtcCompileProgram(prog, 1, opts);
 
   if (res != NVRTC_SUCCESS) {
