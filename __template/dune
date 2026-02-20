@@ -1,12 +1,12 @@
 (rule
  (targets main.exe)
- (deps main.c ../shared/cuda_helpers.h)
+ (deps main.c ../shared/cuda_helpers.h ../shared/cuda_helpers.c)
  (action
   (run gcc -O2
        -I /usr/local/cuda-13.0/include
        -L /usr/local/cuda-13.0/lib64
        -Wl,-rpath,/usr/local/cuda-13.0/lib64
-       -o %{targets} main.c
+       -o %{targets} main.c ../shared/cuda_helpers.c
        -lcuda -lnvrtc)))
 
 (rule

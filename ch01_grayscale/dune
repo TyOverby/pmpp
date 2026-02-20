@@ -6,11 +6,11 @@
 
 (rule
  (targets main_cuda.exe)
- (deps main_cuda.c ../shared/cuda_helpers.h ../stb/stb_image.h ../stb/stb_image_write.h)
+ (deps main_cuda.c ../shared/cuda_helpers.h ../shared/cuda_helpers.c ../stb/stb_image.h ../stb/stb_image_write.h)
  (action
   (run gcc -O2
        -I /usr/local/cuda-13.0/include
        -L /usr/local/cuda-13.0/lib64
        -Wl,-rpath,/usr/local/cuda-13.0/lib64
-       -o %{targets} main_cuda.c
+       -o %{targets} main_cuda.c ../shared/cuda_helpers.c
        -lcuda -lnvrtc -lm)))
