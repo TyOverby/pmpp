@@ -70,6 +70,10 @@ int main(int argc, char** argv) {
   exit_on_error(cuMemFree(d_input));
   exit_on_error(cuMemFree(d_output));
 
+  for (int i = 0; i < 3 * num_pixels; i += 3) {
+    printf("(%d %d %d) ", output[i], output[i + 1], output[i + 2]);
+  }
+
   if (!stbi_write_png(output_path, width, height, 3, output, width * 3)) {
     fprintf(stderr, "Failed to write image: %s\n", output_path);
     free(output);
