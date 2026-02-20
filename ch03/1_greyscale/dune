@@ -1,22 +1,16 @@
 (rule
  (targets main.exe)
- (deps main.c ../../stb/stb_image.h ../../stb/stb_image_write.h)
- (action
-  (run gcc -O2 -o %{targets} main.c -lm)))
-
-(rule
- (targets main_cuda.exe)
- (deps main_cuda.c (glob_files ../../shared/*) (glob_files ../../stb/*))
+ (deps main.c (glob_files ../../shared/*) (glob_files ../../stb/*))
  (action
   (run gcc -O2
        -I /usr/local/cuda-13.0/include
        -L /usr/local/cuda-13.0/lib64
        -Wl,-rpath,/usr/local/cuda-13.0/lib64
-       -o %{targets} main_cuda.c ../../shared/cuda_helpers.c
+       -o %{targets} main.c ../../shared/cuda_helpers.c
        -lcuda -lnvrtc -lm)))
 
 (rule
-  (targets test_output_cuda.png)
-  (deps main_cuda.exe kernel.cu test_input.png)
+  (targets output.png)
+  (deps main.exe kernel.cu checkerboard.png)
   (mode promote)
   (action (run %{deps} %{targets} )))
