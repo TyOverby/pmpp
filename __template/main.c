@@ -22,11 +22,11 @@ int main(int argc, char** argv) {
   free(source);
 
   CUfunction kernel;
-  cuModuleGetFunction(&kernel, module, "hello");
+  exit_on_error(cuModuleGetFunction(&kernel, module, "hello"));
 
   // Launch: 2 blocks, 4 threads
-  cuLaunchKernel(kernel, 2, 1, 1, 4, 1, 1, 0, NULL, NULL, NULL);
-  cuCtxSynchronize();
+  exit_on_error(cuLaunchKernel(kernel, 2, 1, 1, 4, 1, 1, 0, NULL, NULL, NULL));
+  exit_on_error(cuCtxSynchronize());
 
   printf("\nCUDA is working!\n");
 

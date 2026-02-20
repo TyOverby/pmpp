@@ -18,5 +18,6 @@ cuda_state cuda_init(void);
 void cuda_print_device_info(const cuda_state* s);
 int cuda_compile_kernel(const cuda_state* s, const char* source, CUmodule* module);
 void cuda_cleanup(cuda_state* s, CUmodule module);
+void exit_on_error(CUresult result);
 
 #endif

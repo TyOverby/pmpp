@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
   free(source);
 
   CUfunction kernel;
-  cuModuleGetFunction(&kernel, module, "rgb_to_grayscale");
+  exit_on_error(cuModuleGetFunction(&kernel, module, "rgb_to_grayscale"));
 
   // Load image
   int width, height, channels;
@@ -47,26 +47,28 @@ int main(int argc, char** argv) {
 
   // Allocate device memory
   CUdeviceptr d_rgb, d_gray;
-  cuMemAlloc(&d_rgb, 3 * num_pixels);
-  cuMemAlloc(&d_gray, num_pixels);
+  exit_on_error(cuMemAlloc(&d_rgb, 3 * num_pixels));
+  exit_on_error(cuMemAlloc(&d_gray, num_pixels));
 
   // Copy input to device
-  cuMemcpyHtoD(d_rgb, img, 3 * num_pixels);
+  exit_on_error(cuMemcpyHtoD(d_rgb, img, 3 * num_pixels));
   stbi_image_free(img);
 
   // Launch kernel
-  int threads_per_block = 256;
-  int num_blocks = (num_pixels + threads_per_block - 1) / threads_per_block;
+  int threads_per_dimension = 32;
+  int blocks_x = ceil((double)width / threads_per_dimension);
+  int blocks_y = ceil((double)height / threads_per_dimension);
   void* args[] = {&d_rgb, &d_gray, &width, &height};
-  cuLaunchKernel(kernel, num_blocks, 1, 1, threads_per_block, 1, 1, 0, NULL, args, NULL);
+  exit_on_error(cuLaunchKernel(kernel, blocks_x, blocks_y, 1, threads_per_dimension, threads_per_dimension, 1, 0, NULL,
+                               args, NULL));
   cuCtxSynchronize();
 
   // Copy result back to host
   unsigned char* gray = malloc(num_pixels);
-  cuMemcpyDtoH(gray, d_gray, num_pixels);
+  exit_on_error(cuMemcpyDtoH(gray, d_gray, num_pixels));
 
-  cuMemFree(d_rgb);
-  cuMemFree(d_gray);
+  exit_on_error(cuMemFree(d_rgb));
+  exit_on_error(cuMemFree(d_gray));
 
   if (!stbi_write_png(output_path, width, height, 1, gray, width)) {
     fprintf(stderr, "Failed to write image: %s\n", output_path);
