@@ -1,7 +1,7 @@
 # Programming Massively Parallel Processors — Exercises
 
 Working through the exercises from the book using an NVIDIA GeForce RTX 4080
-(compute capability 8.9), CUDA 13.0, and driver 580.
+(compute capability 8.9), CUDA 13.2, and driver 580.
 
 ## Project Structure
 
