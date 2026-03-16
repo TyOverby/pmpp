@@ -27,15 +27,15 @@ void __device__ copy_in_2(const unsigned char* input, int width, int height, int
     int cx = blockDim.x * blockIdx.x + threadIdx.x;
     int cy = blockDim.y * blockIdx.y + threadIdx.y;
 
-    for (int y = cy - blur_radius; y < cy + blockDim.y + blur_radius; y++) {
-      for (int x = cx - blur_radius; x < cx + blockDim.x + blur_radius; x++) {
+    for (int y = max(0, cy - blur_radius); y < cy + blockDim.y + blur_radius; y++) {
+      for (int x = max(0, cx - blur_radius); x < cx + blockDim.x + blur_radius; x++) {
         if (x >= 0 && x < width && y >= 0 && y < height) {
           int local_offset = translate_offset(x, y, blur_radius);
           int global_offset = (y * width + x) * 3;
           local_mem[local_offset + 0] = input[global_offset + 0];
           local_mem[local_offset + 1] = input[global_offset + 1];
           local_mem[local_offset + 2] = input[global_offset + 2];
-        }
+        } 
       }
     }
   }
