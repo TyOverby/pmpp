@@ -1,32 +1,4 @@
-(rule
- (targets main.exe)
- (deps
-  main.c
-  (glob_files ../../shared/*)
-  (glob_files ../../stb/*))
- (action
-  (run
-   gcc
-   -O2
-   -I
-   /usr/local/cuda/include
-   -L
-   /usr/local/cuda/lib64
-   -Wl,-rpath,/usr/local/cuda/lib64
-   -o
-   %{targets}
-   main.c
-   ../../shared/cuda_helpers.c
-   -lcuda
-   -lnvrtc
-   -lm)))
-
-(rule
- (targets output.png)
- (deps main.exe kernel.cu checkerboard.png)
- (mode promote)
- (action
-  (run %{deps} %{targets})))
+;; TODO: fix all this
 
 (rule
  (alias lint)

@@ -2,15 +2,48 @@
  (targets main.exe)
  (deps main.c ../shared/cuda_helpers.h ../shared/cuda_helpers.c)
  (action
-  (run gcc -O2
-       -I /usr/local/cuda/include
-       -L /usr/local/cuda/lib64
-       -Wl,-rpath,/usr/local/cuda/lib64
-       -o %{targets} main.c ../shared/cuda_helpers.c
-       -lcuda -lnvrtc)))
+  (run
+   gcc
+   -O2
+   -I
+   /usr/local/cuda/include
+   -L
+   /usr/local/cuda/lib64
+   -Wl,-rpath,/usr/local/cuda/lib64
+   -o
+   %{targets}
+   main.c
+   ../shared/cuda_helpers.c
+   -lcuda
+   -lnvrtc)))
 
 (rule
  (alias run)
  (deps main.exe kernel.cu)
  (action
   (run ./main.exe kernel.cu)))
+
+(rule
+ (alias lint)
+ (deps
+  kernel.cu
+  (glob_files ../shared/cuda_stubs/*))
+ (action
+  (run
+   clang-20
+   --cuda-device-only
+   --cuda-gpu-arch=sm_89
+   --cuda-path=/usr/local/cuda
+   -I
+   ../shared/cuda_stubs
+   -fsyntax-only
+   -Weverything
+   -Wno-c++98-compat
+   -Wno-c++98-compat-pedantic
+   -Wno-unknown-cuda-version
+   -Wno-missing-prototypes
+   -Wno-unused-parameter
+   -Wno-old-style-cast
+   -Wno-unsafe-buffer-usage
+   -Werror
+   kernel.cu)))

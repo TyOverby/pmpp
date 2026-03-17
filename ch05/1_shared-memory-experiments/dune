@@ -1,16 +1,51 @@
 (rule
  (targets main.exe)
- (deps main.c (glob_files ../../shared/*) (glob_files ../../stb/*))
+ (deps
+  main.c
+  (glob_files ../../shared/*)
+  (glob_files ../../stb/*))
  (action
-  (run gcc -O2
-       -I /usr/local/cuda/include
-       -L /usr/local/cuda/lib64
-       -Wl,-rpath,/usr/local/cuda/lib64
-       -o %{targets} main.c ../../shared/cuda_helpers.c
-       -lcuda -lnvrtc -lm)))
+  (run
+   gcc
+   -O2
+   -I
+   /usr/local/cuda/include
+   -L
+   /usr/local/cuda/lib64
+   -Wl,-rpath,/usr/local/cuda/lib64
+   -o
+   %{targets}
+   main.c
+   ../../shared/cuda_helpers.c
+   -lcuda
+   -lnvrtc
+   -lm)))
 
 (rule
-  (targets output.png)
-  (deps main.exe kernel.cu checkerboard.png)
-  (mode promote)
-  (action (run %{deps} %{targets} )))
+ (targets output.png)
+ (deps main.exe kernel.cu checkerboard.png)
+ (mode promote)
+ (action
+  (run %{deps} %{targets})))
+
+(rule
+ (alias lint)
+ (deps
+  kernel.cu
+  (glob_files ../../shared/cuda_stubs/*))
+ (action
+  (run
+   clang-20
+   --cuda-device-only
+   --cuda-gpu-arch=sm_89
+   --cuda-path=/usr/local/cuda
+   -I
+   ../../shared/cuda_stubs
+   -fsyntax-only
+   -Weverything
+   -Wno-c++98-compat
+   -Wno-c++98-compat-pedantic
+   -Wno-unknown-cuda-version
+   -Wno-missing-prototypes
+   -Werror
+   kernel.cu)))

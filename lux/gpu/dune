@@ -1,9 +1,6 @@
 (rule
  (targets main.exe)
- (deps
-  main.c
-  (glob_files ../../shared/*)
-  (glob_files ../../stb/*))
+ (deps main.c ../../shared/cuda_helpers.h ../../shared/cuda_helpers.c)
  (action
   (run
    gcc
@@ -18,15 +15,13 @@
    main.c
    ../../shared/cuda_helpers.c
    -lcuda
-   -lnvrtc
-   -lm)))
+   -lnvrtc)))
 
 (rule
- (targets output.png)
- (deps main.exe kernel.cu checkerboard.png)
- (mode promote)
+ (alias run)
+ (deps main.exe kernel.cu)
  (action
-  (run %{deps} %{targets})))
+  (run ./main.exe kernel.cu)))
 
 (rule
  (alias lint)

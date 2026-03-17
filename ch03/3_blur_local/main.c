@@ -2,7 +2,6 @@
 #include "../../stb/stb_image.h"
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "../../stb/stb_image_write.h"
-
 #include "../../shared/cuda_helpers.h"
 
 int main(int argc, char** argv) {
@@ -58,7 +57,7 @@ int main(int argc, char** argv) {
   int threads_per_dimension = 32;
   int blocks_x = ceil((double)width / threads_per_dimension);
   int blocks_y = ceil((double)height / threads_per_dimension);
-  int blur_radius = 1;
+  int blur_radius = 5;
   void* args[] = {&d_input, &d_output, &width, &height, &blur_radius};
   int local_memory_size = (blur_radius * 2 + threads_per_dimension) * (blur_radius * 2 + threads_per_dimension) * 3;
   exit_on_error(cuLaunchKernel(kernel, blocks_x, blocks_y, 1, threads_per_dimension, threads_per_dimension, 1,

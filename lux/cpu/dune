@@ -1,0 +1,18 @@
+(rule
+ (targets main.exe)
+ (deps
+  main.c
+  lux_cpu.c
+  ../shared/lux_priv.c
+  ../shared/lux.h
+  ../shared/lux_priv.h
+  lux_cpu.h
+  (glob_files ../../stb/*.h))
+ (action
+  (run gcc -O2 -DSTB_IMAGE_WRITE_IMPLEMENTATION -I../../stb -o %{targets} main.c lux_cpu.c ../shared/lux_priv.c)))
+
+(rule
+ (alias run)
+ (deps main.exe)
+ (action
+  (run ./main.exe)))
